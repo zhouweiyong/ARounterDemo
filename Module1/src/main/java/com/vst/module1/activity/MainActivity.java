@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.Postcard;
 import com.alibaba.android.arouter.facade.callback.NavigationCallback;
@@ -72,23 +73,24 @@ public class MainActivity extends AppCompatActivity {
                         .navigation(MainActivity.this, new NavigationCallback() {
                             @Override
                             public void onFound(Postcard postcard) {
-                                Log.i("zwy", "onFound");
+                                Log.d("ARouter", "找到了");
                             }
 
                             @Override
                             public void onLost(Postcard postcard) {
-                                Log.i("zwy", "onLost");
+                                Log.d("ARouter", "找不到了");
                             }
 
                             @Override
                             public void onArrival(Postcard postcard) {
-                                Log.i("zwy", "onArrival");
+                                Log.d("ARouter", "跳转完了");
                             }
 
                             @Override
                             public void onInterrupt(Postcard postcard) {
-                                Log.i("zwy", "onInterrupt");
+                                Log.d("ARouter", "被拦截了");
                             }
+
                         });
             }
         });
@@ -127,6 +129,39 @@ public class MainActivity extends AppCompatActivity {
                 ARouter.getInstance().build("/module1/mmactivity")
                         .withBundle("bundle", bundle)
                         .navigation();
+            }
+        });
+        findViewById(R.id.btn13).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {//跳转失败，采取单独降级策略
+                ARouter.getInstance().build("/text/todo").navigation(MainActivity.this, new NavigationCallback() {
+                    @Override
+                    public void onFound(Postcard postcard) {
+
+                    }
+
+                    @Override
+                    public void onLost(Postcard postcard) {
+                        Log.i("zwy", "跳转失败");
+                        Toast.makeText(MainActivity.this, "跳转失败了，降级策略", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onArrival(Postcard postcard) {
+
+                    }
+
+                    @Override
+                    public void onInterrupt(Postcard postcard) {
+
+                    }
+                });
+            }
+        });
+        findViewById(R.id.btn14).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {//跳转失败，采取全局降级策略
+                ARouter.getInstance().build("/test/todo").navigation();
             }
         });
     }
